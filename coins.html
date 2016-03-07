@@ -22,7 +22,7 @@
 
   <div class="wrapper">
     <div id="container">
-      <p class="tagline" style="padding: 5px 20px 0;">Xaoc raid</p>
+      <p class="tagline" style="padding: 5px 20px 0;">GW2 Coinage</p>
       <div id="main" role="main">
         <article class="markdown-body">
           <br/>
@@ -35,9 +35,8 @@
     silver<br />
     <input type="text" class="coinage" id="copper" value="0" maxlength="2" ondrop="return false"
         onpaste="return false" autocomplete="off" />
-    copper
-    <div id="chatCode">
-    </div>
+    copper<br />
+    <input id="chatCode" />
     <script type="text/javascript">
 
         /**
@@ -114,7 +113,7 @@
             wallet.gold = parseInt($('#gold').val()) || 0;
 
             // Update chat link
-            $('#chatCode').text(wallet.getCoinLink());
+            $('#chatCode').val(wallet.getCoinLink());
 
             // Reset input fields (cheap trim with integer parsing)
             if (wallet.getCoinTotal() <= ULONG_MAX)
@@ -139,6 +138,12 @@
 
             // Reset all textfields and chat code to 0
             updateFields();
+            
+            // set focus update
+            $('#chatCode').focus(function ()
+            {
+              $(this).select();
+            });
         });
     </script>
         </article>
