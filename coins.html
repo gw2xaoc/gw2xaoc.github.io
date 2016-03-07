@@ -1,0 +1,155 @@
+<!doctype html>
+<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
+<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on https://github.com/jonrohan -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen">
+  <link rel="stylesheet" href="stylesheets/github-dark.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
+
+  <title>GW2 Coinage</title>
+  <meta name="description" content="">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <div id="container">
+      <p class="tagline" style="padding: 5px 20px 0;">Xaoc raid</p>
+      <div id="main" role="main">
+        <article class="markdown-body">
+          <br/>
+    <input type="text" class="coinage" id="gold" value="0" maxlength="6" ondrop="return false"
+        onpaste="return false" autocomplete="off" />
+    gold
+    <br />
+    <input type="text" class="coinage" id="silver" value="0" maxlength="2" ondrop="return false"
+        onpaste="return false" autocomplete="off" />
+    silver<br />
+    <input type="text" class="coinage" id="copper" value="0" maxlength="2" ondrop="return false"
+        onpaste="return false" autocomplete="off" />
+    copper
+    <div id="chatCode">
+    </div>
+    <script type="text/javascript">
+
+        /**
+        *
+        * Generates coinage link codes for Guild Wars 2
+        *
+        * @author     That Shaman <http://www.reddit.com/user/that_shaman>
+        * @license    http://opensource.org/licenses/MIT
+        * @link       http://thatshaman.blogspot.com
+        * @version    1.0.0
+        *
+        */
+
+        // Constant for unsigned long integer
+        var ULONG_MAX = 4294967295;
+
+        // The wallet object can store and convert coins to link codes
+        var wallet = {
+            copper: 0, silver: 0, gold: 0,
+            getCoinTotal: function () // Gets total ammount of coin (in copper)
+            {
+                return (this.copper + (this.silver * 100) + (this.gold * 10000));
+            },
+            getCoinLink: function (coin) // Converts coin to GW2 chat link code
+            {
+                // If coin is undefined use the current ammount in wallet
+                coin = coin || this.getCoinTotal();
+
+                // Clamp the amount of coin between 0 and ULONG_MAX
+                coin = (coin < 0 ? 0 : (coin > ULONG_MAX ? ULONG_MAX : coin));
+
+                // Coinage link starts with chr(01)
+                var chatCode = String.fromCharCode(1);
+
+                // Perform bitwise operation on coins and append character to string
+                for (i = 0; i < 4; i++) chatCode += String.fromCharCode((coin >> (i * 8)) & 255);
+
+                // Return base64 string with chat code tags
+                return "[&" + btoa(chatCode) + "]";
+            }
+        }
+
+        // Validate keyboard input
+        function addKeyBoardListener(inputField)
+        {
+            inputField.keydown(function (event)
+            {
+                var key = event.which;
+
+                // Allowed keystrokes: Number keys (48<->57), Numpad (96<->105), Arrow keys (37<->40), delete (46), escape (27), backspace (8), tab (9)            
+                if ((key >= 48 && key <= 57) || (key >= 96 && key <= 105) || (key >= 37 && key <= 40) || key == 46 || key == 27 || key == 8 || key == 9)
+                {
+                    return true;
+                }
+                else
+                {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+
+            inputField.keyup(function (event)
+            {
+                updateFields();
+            });
+        }
+
+        // Update the coinage textfields and chat code label
+        function updateFields()
+        {
+            // Update the wallet with user input
+            wallet.copper = parseInt($('#copper').val()) || 0;
+            wallet.silver = parseInt($('#silver').val()) || 0;
+            wallet.gold = parseInt($('#gold').val()) || 0;
+
+            // Update chat link
+            $('#chatCode').text(wallet.getCoinLink());
+
+            // Reset input fields (cheap trim with integer parsing)
+            if (wallet.getCoinTotal() <= ULONG_MAX)
+            {
+                $('#copper').val(wallet.copper.toString());
+                $('#silver').val(wallet.silver.toString());
+                $('#gold').val(wallet.gold.toString());
+            }
+            else // Maximum reached
+            {
+                $('#copper').val("95");
+                $('#silver').val("72");
+                $('#gold').val("429496");
+            }
+        }
+
+        // Get this thing up and running
+        $(document).ready(function ()
+        {
+            // Add keyboard listeners to the textfields
+            addKeyBoardListener($('.coinage'));
+
+            // Reset all textfields and chat code to 0
+            updateFields();
+        });
+    </script>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="creds">
+        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
+      </div>
+    </footer>
+  </div>
+
+</body>
+</html>
